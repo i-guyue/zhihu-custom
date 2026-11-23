@@ -47,3 +47,29 @@
     color: #999;
   }
 }
+
+/* 隐藏模块分组一键开关右侧的说明文字，沿用设置面板内提示文字的颜色与字号 */
+.ctz-group-toggle-hint {
+  font-size: 12px;
+  color: #999;
+  padding-left: 8px;
+}
+
+/*
+ * 隐藏项开关名称下方的说明小字：一句话讲清「屏蔽的是什么」。
+ * 名称与说明分行，行高收紧以控制单个开关高度；说明颜色比主文字浅、但保证对比度。
+ */
+.ctz-hidden-item {
+  & > div:first-of-type {
+    line-height: 1.4 !important;
+  }
+}
+.ctz-hidden-item-label {
+  line-height: 24px;
+}
+.ctz-hidden-item-desc {
+  font-size: 12px;
+  color: #787878;
+  line-height: 18px;
+  padding-bottom: 2px;
+}

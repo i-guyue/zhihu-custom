@@ -22,29 +22,34 @@
   <div id="CTZ_DIALOG_CONTENT">
     <!-- 左侧菜单 -->
     <div id="CTZ_DIALOG_LEFT">
-      <div id="CTZ_LEFT_BUTTONS">
-        <button class="ctz-button" name="dialogClose">✕</button>
-        <button class="ctz-button" name="dialogBig">⇵</button>
-      </div>
       <div id="CTZ_DIALOG_MENU">
-        <div data-href="#CTZ_BASIS">通用</div>
-        <div data-href="#CTZ_HIGH_PERFORMANCE">高性能</div>
-        <div data-href="#CTZ_POSITION">悬浮模块</div>
-        <div data-href="#CTZ_HIDDEN">隐藏模块</div>
-        <div data-href="#CTZ_FILTER" data-commit="更改后请重新刷新页面">屏蔽内容</div>
-        <div data-href="#CTZ_BLACKLIST" data-commit="更改后请重新刷新页面, 需开启接口拦截">黑名单</div>
-        <div data-href="#CTZ_VERSION">页面尺寸</div>
-        <div data-href="#CTZ_THEME">颜色</div>
-        <div data-href="#CTZ_HISTORY_LIST" data-commit="最多缓存500条, 包含已过滤项">推荐列表缓存</div>
-        <div data-href="#CTZ_HISTORY_VIEW" data-commit="最多缓存500条">浏览历史记录</div>
-        <div data-href="#CTZ_DEFAULT" data-commit="修改器自带功能, 不需要额外开启">默认功能</div>
+        <!--
+          主菜单 7 项（按用户目标归类）。
+          data-href 指向本组的主容器 id；data-also 列出本组要一起显示的附属容器 id（逗号分隔）。
+          分组：外观样式=所有视觉样式（含颜色/视频显示）；显示修改=纯显示类开关（原通用里的显示修改）；
+                内容过滤=屏蔽内容+黑名单；悬浮增强=悬浮模块+高性能；数据记录=缓存+历史；
+                脚本设置=脚本自身功能；界面清理=隐藏模块。
+        -->
+        <div data-href="#CTZ_VERSION">外观样式</div>
+        <div data-href="#CTZ_SHOW">显示修改</div>
+        <div data-href="#CTZ_HIDDEN">界面清理</div>
+        <div data-href="#CTZ_FILTER" data-also="#CTZ_BLACKLIST" data-commit="更改后请重新刷新页面；黑名单需开启接口拦截">内容过滤</div>
+        <div data-href="#CTZ_POSITION" data-also="#CTZ_HIGH_PERFORMANCE">悬浮增强</div>
+        <div data-href="#CTZ_HISTORY_LIST" data-also="#CTZ_HISTORY_VIEW" data-commit="最多缓存500条">数据记录</div>
+        <div data-href="#CTZ_DEFAULT" data-also="#CTZ_BASIS" data-commit="修改器自带功能, 不需要额外开启">脚本设置</div>
       </div>
+      <!-- 版本号固定在左侧菜单底部 -->
+      <div class="ctz-version" style="font-size: 12px"></div>
     </div>
 
     <div id="CTZ_DIALOG_RIGHT">
       <div id="CTZ_DIALOG_RIGHT_TITLE">
         <div class="ctz-right-title-content"></div>
-        <div class="ctz-version" style="font-size: 12px"></div>
+        <!-- 缩放 / 关闭按钮放到右侧标题栏 -->
+        <div id="CTZ_RIGHT_BUTTONS">
+          <button class="ctz-button" name="dialogBig">⇵</button>
+          <button class="ctz-button" name="dialogClose">✕</button>
+        </div>
       </div>
       <div id="CTZ_DIALOG_RIGHT_ANCHOR" style="display: none"></div>
 
@@ -134,22 +139,16 @@
             </div>
           </div>
 
+        </div>
+
+        <!-- 显示修改：纯显示类开关（从原「通用」搬出，与样式、脚本设置分开） -->
+        <div id="CTZ_SHOW" style="display: none">
           <div class="ctz-title">
             显示修改
-            <span class="ctz-commit" style="color: red">修改后刷新页面生效</span>
+            <span class="ctz-commit" style="color: red">部分选项修改后刷新页面生效</span>
           </div>
           <div id="CTZ_BASIC_SHOW_SELECT" class="ctz-form-box"></div>
           <div id="CTZ_BASIS_SHOW_CONTENT"></div>
-
-          <div class="ctz-title">自定义样式</div>
-          <div class="ctz-form-box">
-            <div class="ctz-form-box-item">
-              <div style="align-items: start; padding: 0; text-align: right">
-                <textarea name="textStyleCustom" placeholder="内容为CSS" style="resize: vertical; width: 100%"></textarea>
-                <button class="ctz-button" name="styleCustom">确定</button>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- 悬浮模块 -->
@@ -434,44 +433,34 @@
           <div class="ctz-set-content"></div>
         </div>
 
-        <!-- 主题 -->
-        <div id="CTZ_THEME" style="display: none">
-          <div class="ctz-set-background ctz-form-box"></div>
-
-          <div class="ctz-form-box">
-            <div class="ctz-form-box-item">
-              <div>修改文字颜色</div>
-              <div>
-                <input type="text" class="ctz-i-change" name="colorText1" style="width: 148px; margin-right: 8px" placeholder="例如：#f7f9f9" />
-                <button class="ctz-button ctz-reset-font-size" name="reset-colorText1">↺</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- 关注列表原创内容 -->
-          <div class="ctz-form-box">
-            <div class="ctz-form-box-item">
-              <div>关注列表高亮原创内容</div>
-              <div>
-                <div><input class="ctz-i ctz-switch" name="highlightOriginal" type="checkbox" value="on" /></div>
-              </div>
-            </div>
-            <div class="ctz-form-box-item">
-              <div>关注列表高亮原创内容背景色</div>
-              <div>
-                <div>
-                  <input type="text" class="ctz-i-change" name="backgroundHighlightOriginal" style="width: 148px; margin-right: 8px" placeholder="例如：#fbf8f1" />
-                  <button class="ctz-button ctz-reset-font-size" name="reset-backgroundHighlightOriginal">↺</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- 页面尺寸 -->
         <div id="CTZ_VERSION" style="display: none">
-          <!-- 页面内容宽度 -->
-          <div class="ctz-title">页面内容宽度</div>
+          <!--
+            样式修改总开关（配置 key: sizeStyleEnabled，默认关闭）
+            关闭后：背景/主题配色、版心与字体尺寸、自定义 CSS、视频样式全部不注入，
+                    知乎页面还原原生外观；仅保留脚本自身按钮与隐藏屏蔽样式。
+            已填写的配置值不清空，重新打开立即恢复原有设置。
+            开关变更由 fn-changer.ts 的 changeStyleEnabled 统一刷新各视觉模块。
+          -->
+          <!--
+            样式修改总开关：内嵌在 form-box 里，不再作为 .ctz-title 占用右侧锚点。
+            关闭后所有视觉修改还原知乎原生；各功能块的开关在总开关开启前提下逐类生效。
+          -->
+          <div class="ctz-form-box">
+            <div class="ctz-form-box-item ctz-hidden-item">
+              <div>
+                <div class="ctz-hidden-item-label">样式修改总开关</div>
+                <div class="ctz-hidden-item-desc">关闭后背景、尺寸、主题等视觉修改全部还原知乎原生；配置值保留，重新打开立即恢复</div>
+              </div>
+              <div><input class="ctz-i ctz-switch" name="sizeStyleEnabled" type="checkbox" value="on" /></div>
+            </div>
+          </div>
+
+          <!-- 页面内容宽度（开关就近放在标题行） -->
+          <div class="ctz-title ctz-title-with-switch">
+            <span class="ctz-title-text">页面内容宽度</span>
+            <span class="ctz-title-switch"><input class="ctz-i ctz-switch" name="styleWidthEnabled" type="checkbox" value="on" /></span>
+          </div>
           <div id="CTZ_VERSION_RANGE_ZHIHU" class="ctz-form-box"></div>
           <div class="ctz-form-box">
             <div class="ctz-form-box-item">
@@ -481,11 +470,17 @@
           </div>
 
           <!-- 页面字体大小 -->
-          <div class="ctz-title">字体大小</div>
+          <div class="ctz-title ctz-title-with-switch">
+            <span class="ctz-title-text">字体大小</span>
+            <span class="ctz-title-switch"><input class="ctz-i ctz-switch" name="styleFontEnabled" type="checkbox" value="on" /></span>
+          </div>
           <div id="CTZ_FONT_SIZE_IN_ZHIHU" class="ctz-form-box"></div>
 
           <!-- 图片尺寸 -->
-          <div class="ctz-title">图片尺寸</div>
+          <div class="ctz-title ctz-title-with-switch">
+            <span class="ctz-title-text">图片尺寸</span>
+            <span class="ctz-title-switch"><input class="ctz-i ctz-switch" name="styleImageEnabled" type="checkbox" value="on" /></span>
+          </div>
           <div class="ctz-form-box">
             <div class="ctz-form-box-item">
               <div>回答和文章图片尺寸</div>
@@ -525,7 +520,10 @@
             </div> -->
           </div>
 
-          <div class="ctz-title">视频尺寸</div>
+          <div class="ctz-title ctz-title-with-switch">
+            <span class="ctz-title-text">列表视频尺寸</span>
+            <span class="ctz-title-switch"><input class="ctz-i ctz-switch" name="styleListVideoEnabled" type="checkbox" value="on" /></span>
+          </div>
 
           <div class="ctz-form-box">
             <div class="ctz-form-box-item">
@@ -536,6 +534,61 @@
               </div>
             </div>
             <div id="CTZ_LIST_VIDEO_SIZE_CUSTOM" class="ctz-form-box-item" style="display: none"></div>
+          </div>
+
+          <!-- 视频样式：从原「脚本设置」的下拉迁入，属于视觉修改 -->
+          <div class="ctz-title ctz-title-with-switch">
+            <span class="ctz-title-text">视频显示方式</span>
+            <span class="ctz-title-switch"><input class="ctz-i ctz-switch" name="styleVideoEnabled" type="checkbox" value="on" /></span>
+          </div>
+          <div class="ctz-form-box">
+            <div class="ctz-form-box-item">
+              <div>回答和文章中的视频显示方式</div>
+              <div><div class="ctz-select" name="videoInAnswerArticle"></div></div>
+            </div>
+          </div>
+
+          <!-- 背景配色：原「颜色」菜单内容并入 -->
+          <div class="ctz-title ctz-title-with-switch">
+            <span class="ctz-title-text">背景配色</span>
+            <span class="ctz-title-switch"><input class="ctz-i ctz-switch" name="styleBackgroundEnabled" type="checkbox" value="on" /></span>
+          </div>
+          <div class="ctz-set-background ctz-form-box"></div>
+          <div class="ctz-form-box">
+            <div class="ctz-form-box-item">
+              <div>修改文字颜色</div>
+              <div>
+                <input type="text" class="ctz-i-change" name="colorText1" style="width: 148px; margin-right: 8px" placeholder="例如：#f7f9f9" />
+                <button class="ctz-button ctz-reset-font-size" name="reset-colorText1">↺</button>
+              </div>
+            </div>
+          </div>
+          <div class="ctz-form-box">
+            <div class="ctz-form-box-item">
+              <div>关注列表高亮原创内容</div>
+              <div><input class="ctz-i ctz-switch" name="highlightOriginal" type="checkbox" value="on" /></div>
+            </div>
+            <div class="ctz-form-box-item">
+              <div>关注列表高亮原创内容背景色</div>
+              <div>
+                <input type="text" class="ctz-i-change" name="backgroundHighlightOriginal" style="width: 148px; margin-right: 8px" placeholder="例如：#fbf8f1" />
+                <button class="ctz-button ctz-reset-font-size" name="reset-backgroundHighlightOriginal">↺</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 自定义样式：开关就近放在标题行 -->
+          <div class="ctz-title ctz-title-with-switch">
+            <span class="ctz-title-text">自定义 CSS</span>
+            <span class="ctz-title-switch"><input class="ctz-i ctz-switch" name="styleCustomCssEnabled" type="checkbox" value="on" /></span>
+          </div>
+          <div class="ctz-form-box">
+            <div class="ctz-form-box-item">
+              <div style="align-items: start; padding: 0; text-align: right">
+                <textarea name="textStyleCustom" placeholder="内容为CSS" style="resize: vertical; width: 100%"></textarea>
+                <button class="ctz-button" name="styleCustom">确定</button>
+              </div>
+            </div>
           </div>
         </div>
 

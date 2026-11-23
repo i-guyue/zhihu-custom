@@ -23,12 +23,28 @@ export const onChangeMenu = (event: MouseEvent) => {
   }
 };
 
+/**
+ * 取某个菜单项对应的全部内容容器 id：主容器（data-href）+ 同组附属容器（data-also）。
+ * 菜单按用户目标归类后，一个菜单项会显示多个原有容器（如「外观样式」=页面尺寸+颜色），
+ * 容器 id 与 DOM 结构都不变，仅由这里统一控制显隐。
+ */
+const getMenuContentIds = (menuItem: HTMLElement): string[] => {
+  const mainId = (menuItem.dataset.href || '').replace(/#/, '');
+  if (!mainId) return [];
+  const alsoIds = (menuItem.dataset.also || '')
+    .split(',')
+    .map((id) => id.trim().replace(/#/, ''))
+    .filter(Boolean);
+  return [mainId, ...alsoIds];
+};
+
 const fnChangeMenu = (target: HTMLElement, domMain: HTMLElement) => {
   const currentHref = target.dataset.href || '';
   const chooseId = currentHref.replace(/#/, '');
   if (!chooseId) return;
+  const showIds = getMenuContentIds(target);
   domA('#CTZ_DIALOG_MENU>div', domMain).forEach((item) => item.classList.remove('target'));
-  domA('#CTZ_DIALOG_MAIN>div', domMain).forEach((item) => (item.style.display = chooseId === item.id ? 'block' : 'none'));
+  domA('#CTZ_DIALOG_MAIN>div', domMain).forEach((item) => (item.style.display = showIds.includes(item.id) ? 'block' : 'none'));
   domA('.ctz-right-title-content>div', domMain).forEach((item) => (item.style.display = currentHref === item.dataset.id ? 'block' : 'none'));
   const nodeMain = dom('#CTZ_DIALOG_MAIN', domMain);
   nodeMain && (nodeMain.scrollTop = 0);
@@ -138,12 +154,19 @@ const getCurrentContentId = (domMain: HTMLElement = document.body) => {
 };
 
 const getCurrentTitleList = (domMain: HTMLElement = document.body) => {
-  const currentContentId = getCurrentContentId(domMain);
-  const nodeCurrentContent = currentContentId ? dom(`#${currentContentId}`, domMain) : undefined;
-  return nodeCurrentContent ? [...domA('.ctz-title', nodeCurrentContent)] : [];
+  const menuTarget = dom('#CTZ_DIALOG_MENU>div.target', domMain);
+  if (!menuTarget) return [];
+  // 一个菜单项可能对应多个容器，汇总它们的 .ctz-title 供右侧锚点导航使用。
+  return getMenuContentIds(menuTarget).flatMap((id) => {
+    const node = dom(`#${id}`, domMain);
+    return node ? [...domA('.ctz-title', node)] : [];
+  });
 };
 
 const getTitleText = (nodeTitle: HTMLElement) => {
+  // 标题行带开关时，文字放在 .ctz-title-text 里；优先取它，避免把开关区域算进锚点名。
+  const titleText = nodeTitle.querySelector('.ctz-title-text');
+  if (titleText) return (titleText.textContent || '').replace(/\s+/g, ' ').trim();
   const text = [...nodeTitle.childNodes]
     .filter((item) => item.nodeType === Node.TEXT_NODE)
     .map((item) => item.textContent || '')
@@ -152,4 +175,20 @@ const getTitleText = (nodeTitle: HTMLElement) => {
   return (text || nodeTitle.textContent || '').replace(/\s+/g, ' ');
 };
 
-const getTitleOffsetTop = (nodeTitle: HTMLElement, nodeMain: HTMLElement) => nodeTitle.getBoundingClientRect().top - nodeMain.getBoundingClientRect().top + nodeMain.scrollTop;
+/**
+ * 计算某标题在滚动内容中的真实纵向位置（可直接作为 nodeMain.scrollTop 的目标值）。
+ *
+ * 分组标题 .ctz-title 是 position:sticky; top:0。吸顶之后，无论 getBoundingClientRect().top
+ * 还是 offsetTop 都会被 sticky 偏移污染，读到的都不是标题的原始文档位置——于是「切到前面的
+ * tab」算出的目标约等于当前 scrollTop，表现为只能往下滑、点前面的分组回不去顶部。
+ *
+ * 因此在读取位置前，临时把所有分组标题降级为 static，读完立即恢复（同一同步流程内完成，
+ * 不会有可见闪烁），再用 rect 差值 + 当前 scrollTop 得到稳定的文档流偏移。
+ */
+const getTitleOffsetTop = (nodeTitle: HTMLElement, nodeMain: HTMLElement) => {
+  const titles = Array.from(nodeMain.querySelectorAll<HTMLElement>('.ctz-title'));
+  titles.forEach((item) => (item.style.position = 'static'));
+  const top = nodeTitle.getBoundingClientRect().top - nodeMain.getBoundingClientRect().top + nodeMain.scrollTop;
+  titles.forEach((item) => (item.style.position = ''));
+  return top;
+};

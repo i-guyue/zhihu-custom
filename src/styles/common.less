@@ -152,6 +152,11 @@
     background: #504e4e;
   }
 
+  // 左侧底部版本号在深色底上的可读性
+  #CTZ_DIALOG_LEFT > .ctz-version {
+    color: #b0adab;
+  }
+
   #CTZ_DIALOG_RIGHT,
   #CTZ_DIALOG_RIGHT_ANCHOR,
   #CTZ_HIDDEN .ctz-title,
@@ -223,6 +228,11 @@
     background: #383534;
   }
 
+  /* 隐藏项说明小字：深色底上用浅灰，保证对比度 */
+  .ctz-hidden-item-desc {
+    color: #a8a5a3;
+  }
+
   #CTZ_DIALOG input[type='range'] {
     background: #474443;
     box-shadow: inset 1px 1px 2px #474443, inset -1px -1px 2px #474443;
@@ -240,8 +250,84 @@
     }
   }
 
-  .ctz-button:hover {
-    color: #62605e;
+  #CTZ_DIALOG,
+  #CTZ_EXTRA_OUTPUT_DIALOG {
+    /**
+     * 设置面板内表单控件的深色配色。
+     *
+     * 这里必须由 [theme-dark] 属性驱动、只作用于设置面板自身：
+     * 之前按钮/下拉的深色样式错误地放在 background.ts 的 dark() 页面注入里
+     * （注入到 CTZ_STYLE_BACKGROUND，带 html[data-theme=dark] 前缀且受样式总开关控制）。
+     * 总开关默认关闭时那段注入为空，控件就会退回 button.less / select.less 写死的白底，
+     * 而文字又继承了 #CTZ_DIALOG 的浅色 #dfdfdf，形成白底浅字、对比度极低。
+     *
+     * 用 #CTZ_DIALOG / #CTZ_EXTRA_OUTPUT_DIALOG 的 ID 选择器提高优先级：
+     * 一是盖过 button.less / select.less 的浅色默认值，
+     * 二是盖过 background.ts 里那条 html[data-theme=dark] .ctz-button，
+     * 同时不误伤知乎页面上注入的 .ctz-button（它们不在这两个容器内）。
+     */
+    .ctz-button {
+      background: #4a4746;
+      border-color: #615e5c;
+      color: #e6e4e4;
+
+      &:hover {
+        background: #595654;
+        border-color: #7a7674;
+        color: #fff;
+      }
+
+      &:active {
+        background: #3e3b3a;
+        color: #fff;
+      }
+    }
+
+    // 主按钮保持主题强调色配白字
+    .ctz-button.ctz-button-primary {
+      background: @primary;
+      border-color: @primary;
+      color: #fff;
+    }
+
+    // 红色按钮保留红色描边与文字，底色跟随面板
+    .ctz-button-red {
+      color: @red1 !important;
+      border: 1px solid @red1 !important;
+    }
+
+    // 禁用态：弱化的浅色文字 + 半透明底
+    .ctz-button:disabled {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: #514e4e;
+      color: #7d7a78;
+    }
+
+    // 下拉触发框：文字用浅色，hover 时给深灰底替代写死的白色
+    .ctz-select-input {
+      color: #e6e4e4;
+
+      &:hover {
+        background: #4a4746;
+        border-color: #615e5c;
+        color: #fff;
+      }
+    }
+
+    // 下拉选项浮层：深底 + 浅字 + 深色阴影
+    .ctz-option-box {
+      background: #3a3736;
+      border-color: #514e4e;
+      color: #e6e4e4;
+      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5), -2px -2px 6px rgba(0, 0, 0, 0.5);
+    }
+
+    // 未选中的单选圆点原本是白底白阴影，深色下改为深灰，避免变成白点
+    .ctz-radio input[type='radio'] + div::before {
+      background: #4a4746;
+      border-color: #615e5c;
+      box-shadow: inset 4px 4px 4px #302e2d, inset -4px -4px 4px #585553;
+    }
   }
 }
 

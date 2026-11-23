@@ -122,7 +122,7 @@ export const OPTIONS_MAP: Record<string, IOptionItem[]> = {
 export const SELECT_BASIS_SHOW: IOptionItem[] = [
   { label: '购物链接显示方式', value: 'linkShopping' },
   { label: '替换<span class="ctz-zhida">知乎直达<span>✦</span></span>为搜索', value: 'replaceZhidaToSearch' },
-  { label: '回答和文章中的视频显示方式', value: 'videoInAnswerArticle' },
+  // videoInAnswerArticle（视频显示方式）已移入「外观样式」，与 styleVideoEnabled 开关就近放置
   { label: '问题页面 - 回答收起/展开状态', value: 'answerOpen' },
   { label: '用户主页 - 内容收起/展开状态', value: 'homeContentOpen' },
 ];

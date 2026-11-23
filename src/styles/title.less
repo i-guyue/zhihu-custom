@@ -17,3 +17,31 @@
     }
   }
 }
+
+// 标题行右侧带开关：外观样式里各功能块把「启用开关」就近放在标题右侧，
+// 关哪个一目了然，不用再单列一个「分项开关」空壳区块。
+.ctz-title.ctz-title-with-switch {
+  justify-content: space-between;
+  padding-right: 12px;
+  .ctz-title-text {
+    flex: 1;
+  }
+  .ctz-title-switch {
+    display: flex;
+    align-items: center;
+  }
+}
+
+// 多行标题：说明文字较长的标题（如页面尺寸 tab 的「样式修改总开关」）需要自适应高度。
+// 基础 .ctz-title 固定 height/line-height 为 42px，长说明换行后行高按 42px/行撑开，
+// 内容上下溢出；叠加 #CTZ_VERSION 的 padding-top:0，顶部溢出部分被内容区裁切，表现为文字遮挡。
+.ctz-title.ctz-title-multiline {
+  height: auto;
+  min-height: 42px;
+  line-height: 1.5;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  & > span {
+    line-height: 1.5;
+  }
+}

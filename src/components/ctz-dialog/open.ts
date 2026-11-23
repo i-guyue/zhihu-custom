@@ -1,6 +1,7 @@
 import { ID_EXTRA_DIALOG } from '../../misc';
 import { dom, domById, myScroll } from '../../tools';
 import { echoData } from '../echo-data';
+import { runHiddenCheck } from '../hidden';
 import { echoHistory } from '../history';
 
 /** 修改器弹窗打开关闭 */
@@ -10,6 +11,8 @@ export const openChange = () => {
     // 开启
     echoData();
     echoHistory();
+    // 每次打开面板体检一次隐藏规则：知乎改版后选择器可能失效，及时提示用户
+    runHiddenCheck();
     domById('CTZ_DIALOG')!.style.display = 'flex';
     nodeButton.dataset.close = '0';
     myScroll.stop();

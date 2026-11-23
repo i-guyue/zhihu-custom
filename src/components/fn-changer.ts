@@ -1,6 +1,7 @@
 import { dom, domById, myStorage } from '../tools';
 import { INPUT_NAME_THEME, INPUT_NAME_THEME_DARK, INPUT_NAME_ThEME_LIGHT, myBackground, onUseThemeDark } from './background';
 import { changeReplaceBlockUserSwitchDisabled } from './black-list';
+import { myCustomStyle } from './custom-style';
 import { appendHiddenStyle } from './hidden';
 import { previewGIF } from './image';
 import { myListenList } from './listen-list';
@@ -8,6 +9,7 @@ import { changeICO, changeTitle } from './page-title';
 import { mySize } from './size';
 import { onChangeSuspensionSwitch, suspensionPickupAttribute } from './suspension';
 import { addArticleTime, addQuestionTime } from './time';
+import { changeVideoStyle } from './video';
 
 /** 更改编辑器方法 */
 export const fnChanger = async (ev: HTMLInputElement) => {
@@ -52,6 +54,23 @@ export const fnChanger = async (ev: HTMLInputElement) => {
     myListenList.restart();
     onUseThemeDark();
   };
+  /**
+   * 样式总开关变更：统一刷新所有会注入视觉样式的模块。
+   *
+   * 各模块（mySize / myBackground / myCustomStyle / changeVideoStyle）都是
+   * 「自己读一次配置再决定注入什么」，总开关本身不会触发它们重算，
+   * 因此切换时必须逐一调用一次；模块内部已各自判断 sizeStyleEnabled，
+   * 关闭时都会注入空串，从而一次性清掉之前注入的全部视觉样式。
+   * 隐藏样式（appendHiddenStyle）与脚本按钮不受此开关影响，无需刷新。
+   */
+  const changeStyleEnabled = async () => {
+    mySize.change();
+    await myBackground.init();
+    const config = await myStorage.getConfig();
+    myCustomStyle.change(config.customizeCss || '');
+    changeVideoStyle();
+    onUseThemeDark();
+  };
 
   const rangeChoosePercent = () => {
     const rangeName = name.replace('IsPercent', '');
@@ -66,6 +85,16 @@ export const fnChanger = async (ev: HTMLInputElement) => {
   };
 
   const ob: Record<string, Function> = {
+    sizeStyleEnabled: changeStyleEnabled,
+    // 7 个视觉子开关：各模块内部已判断自己的子开关，这里统一走全量刷新即可。
+    // 全量刷新是幂等的（每个模块都是「读配置→注入对应 CSS」），不会互相干扰。
+    styleWidthEnabled: changeStyleEnabled,
+    styleFontEnabled: changeStyleEnabled,
+    styleImageEnabled: changeStyleEnabled,
+    styleListVideoEnabled: changeStyleEnabled,
+    styleBackgroundEnabled: changeStyleEnabled,
+    styleCustomCssEnabled: changeStyleEnabled,
+    styleVideoEnabled: changeStyleEnabled,
     [INPUT_NAME_THEME]: changeBackground,
     [INPUT_NAME_ThEME_LIGHT]: changeBackground,
     [INPUT_NAME_THEME_DARK]: changeBackground,

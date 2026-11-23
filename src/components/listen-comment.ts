@@ -149,7 +149,10 @@ const formatComments = async (nodeComments?: HTMLElement, commentBoxClass = '.cs
 
     if (!item.getAttribute(ATTR_ID) || item.classList.contains(CTZ_HIDDEN_ITEM_CLASS)) continue;
 
-    const itemUserBox = item.querySelector(`${commentBoxClass} .css-14nvvry .css-swj9d4`) as HTMLElement;
+    // 评论用户信息容器：知乎改版后 DOM 层级变化，类名链由
+    // .css-14nvvry .css-swj9d4 改为 .css-1bklfe6 .css-z0cc58 .css-swj9d4。
+    // 此处拿不到用户框时会跳过该评论，类名若再次随发版变化需同步更新。
+    const itemUserBox = item.querySelector(`${commentBoxClass} .css-1bklfe6 .css-z0cc58 .css-swj9d4`) as HTMLElement;
     if (!itemUserBox) continue;
     /** 获取当前评论的用户信息，可能有两条的情况（回复评论） */
     const itemCommentUsers = itemUserBox.querySelectorAll('.css-1tww9qq');

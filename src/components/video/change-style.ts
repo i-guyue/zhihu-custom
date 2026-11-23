@@ -2,10 +2,17 @@ import { EVideoInAnswerArticle } from '../../components/select';
 import { fnAppendStyle, myStorage } from '../../tools';
 import { CLASS_VIDEO_ONE, CLASS_VIDEO_TWO } from './download';
 
-/** 修改回答和列表中的视频样式 */
+/**
+ * 修改回答和列表中的视频样式。
+ * 视频样式属于「视觉修改」，与背景/尺寸/自定义 CSS 一样受样式总开关约束：
+ * 总开关关闭时注入空串，还原知乎原生视频样式；配置值 videoInAnswerArticle 保留。
+ */
 export const changeVideoStyle = async () => {
-  const { videoInAnswerArticle } = await myStorage.getConfig();
-  fnAppendStyle('CTZ_STYLE_VIDEO', STYLE_VIDEO[videoInAnswerArticle || EVideoInAnswerArticle.默认]);
+  const config = await myStorage.getConfig();
+  // 总闸 + 「视频样式」子开关同时开启才注入。
+  const enabled = config.sizeStyleEnabled && config.styleVideoEnabled !== false;
+  const style = enabled ? STYLE_VIDEO[config.videoInAnswerArticle || EVideoInAnswerArticle.默认] : '';
+  fnAppendStyle('CTZ_STYLE_VIDEO', style);
 };
 
 const STYLE_VIDEO = {

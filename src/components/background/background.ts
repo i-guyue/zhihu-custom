@@ -12,17 +12,17 @@ const appendPrefix = (str: string, mapCB: (i: string) => string) => str.split(',
 export const myBackground = {
   /** 初始化 */
   init: async function () {
-    const { themeDark = EThemeDark.深色一, themeLight = EThemeLight.默认, colorText1 } = await myStorage.getConfig();
+    const config = await myStorage.getConfig();
+    const domHTML = dom('html')!;
+    const { themeDark = EThemeDark.深色一, themeLight = EThemeLight.默认, colorText1 } = config;
     const useDark = await isDark();
 
-    const isRegular = !useDark && themeLight === EThemeLight.默认;
-
-    fnAppendStyle(
-      'CTZ_STYLE_BACKGROUND',
-      isRegular ? '' : (useDark ? this.dark(themeDark) : this.light(themeLight)) + fnReturnStr(`.ContentItem-title, body{color: ${colorText1}!important;}`, !!colorText1),
-    );
-
-    const domHTML = dom('html')!;
+    /**
+     * 面板主题与页面主题分离：
+     * theme-dark / theme-light 只作用于脚本自己的设置面板（见 styles/common.less），
+     * 属于脚本 UI 配色，必须始终按用户主题设置写入，不受样式总开关影响；
+     * 否则关闭总开关后设置面板会失去深色样式而变白。
+     */
     if (useDark) {
       domHTML.setAttribute('theme-dark', `${themeDark}`);
       domHTML.removeAttribute('theme-light');
@@ -30,6 +30,25 @@ export const myBackground = {
       domHTML.setAttribute('theme-light', `${themeLight}`);
       domHTML.removeAttribute('theme-dark');
     }
+
+    /**
+     * 知乎页面配色注入（CTZ_STYLE_BACKGROUND）属于视觉修改，受样式总开关控制。
+     * 关闭时注入空串清掉旧样式，页面回到知乎原生外观；
+     * 上面写入的 theme-dark/theme-light 保留，仅影响脚本面板。
+     */
+    // 总闸关闭，或「背景配色」子开关关闭时，均清空页面配色样式。
+    // theme-dark/theme-light 仍需写入（仅作用于脚本面板），故 return 前已完成。
+    if (!config.sizeStyleEnabled || config.styleBackgroundEnabled === false) {
+      fnAppendStyle('CTZ_STYLE_BACKGROUND', '');
+      return;
+    }
+
+    const isRegular = !useDark && themeLight === EThemeLight.默认;
+
+    fnAppendStyle(
+      'CTZ_STYLE_BACKGROUND',
+      isRegular ? '' : (useDark ? this.dark(themeDark) : this.light(themeLight)) + fnReturnStr(`.ContentItem-title, body{color: ${colorText1}!important;}`, !!colorText1),
+    );
   },
   /** 浅色模式 */
   light: function (lightKey: EThemeLight) {
@@ -80,11 +99,16 @@ const NAME_BACKGROUND_1 =
   // `,.css-13ev0i:hover,.css-oqi8p3 .lazy[data-lazy-status]` +
   `,${appendClassStart('Tabs-container,EpisodeList-sectionItem')}`;
 
-/** 使用背景色2的元素名称 */
+/**
+ * 使用背景色2的元素名称。
+ * 知乎改版后顶部栏容器为 header.LeanAppHeaderBar（旧 .AppHeader 已不存在），
+ * 其外层包裹容器没有稳定类名，用 :has(> header.LeanAppHeaderBar) 一并选中；
+ * 两者都要参与着色，否则深色/自定义主题下顶部会残留知乎默认白底。
+ */
 const NAME_BACKGROUND_2 =
   `.${CLASS_MESSAGE}` +
   `,.zhuanlan .Post-Row-Content .Post-Row-Content-left,.zhuanlan .Post-content .ContentItem-actions,.zhuanlan .Column-EmptyCard` +
-  `,.Card,.HotItem,.AppHeader,.Topstory-content>div,.PlaceHolder-inner,.PlaceHolder-bg,.ContentItem-actions,.QuestionHeader,.QuestionHeader-footer ` +
+  `,.Card,.HotItem,header.LeanAppHeaderBar,div:has(> header.LeanAppHeaderBar),.Topstory-content>div,.PlaceHolder-inner,.PlaceHolder-bg,.ContentItem-actions,.QuestionHeader,.QuestionHeader-footer ` +
   `,.QZcfWkCJoarhIYxlM_sG,.Sticky,.SearchTabs,.Modal-inner,.Modal-content,.Modal-content div,.Modal-wrapper textarea` +
   `,.Select-list button:active,.Select-list button:hover,.modal-dialog,.modal-dialog-buttons,.zh-profile-card div,.QuestionAnswers-answerAdd div,.Modal-modal-wf58 div` +
   // `,.css-1j23ebo,.css-arjme8 div,.css-arjme8 h1,.css-2lvw8d,.css-1os3m0m,.css-r38x5n div,.css-1mbpn2d,.css-1yjqd5z,.zhuanlan .css-1pariuy` +

@@ -1,0 +1,78 @@
+/**
+ * 隐藏规则失效检测提示区。
+ * 配色用「半透明底色 + 继承面板文字色」，因此同一份样式在深浅两套面板主题下都能读，
+ * 无需分别写进 common.less 的 BackgroundLight / BackgroundDark mixin。
+ */
+#CTZ_HIDDEN_CHECK {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(127, 127, 127, 0.12);
+  border: 1px solid rgba(127, 127, 127, 0.28);
+  font-size: @FontSize;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.ctz-check-hint {
+  opacity: 0.65;
+}
+
+.ctz-check-summary {
+  font-weight: 600;
+}
+
+.ctz-check-ok {
+  color: @green2;
+}
+
+.ctz-check-warn {
+  color: @red2;
+}
+
+.ctz-check-detail {
+  margin-top: 6px;
+
+  summary {
+    cursor: pointer;
+    opacity: 0.8;
+    outline: none;
+  }
+}
+
+.ctz-check-row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(127, 127, 127, 0.18);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.ctz-check-row-name {
+  flex: 0 0 auto;
+  min-width: 96px;
+  font-weight: 600;
+}
+
+.ctz-check-row-sel {
+  flex: 1;
+  opacity: 0.7;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.ctz-check-row-group {
+  flex: 0 0 auto;
+  opacity: 0.55;
+  font-size: 12px;
+}
+
+.ctz-check-note {
+  margin-top: 6px;
+  opacity: 0.6;
+  font-size: 12px;
+}

@@ -5,6 +5,7 @@ import { fnChanger } from '../components/fn-changer';
 import { echoHistory } from '../components/history';
 import { buttonConfirmPageTitle, buttonResetPageTitle } from '../components/page-title';
 import { myPreview } from '../components/preview';
+import { toggleHiddenGroup } from '../components/toggle-all';
 import { moveAndOpen } from '../components/suspension/move';
 import { CONFIG_DEFAULT, CONFIG_SIMPLE } from '../config';
 import { IKeyofHistory } from '../config/types';
@@ -17,6 +18,12 @@ export const initOperate = () => {
   const nodeContent = domById('CTZ_DIALOG')!;
   nodeContent.onclick = (e) => {
     const target = e.target as HTMLInputElement;
+    // 隐藏模块分组一键开关带 ctz-i 类，会命中下面的 CLASS_INPUT_CLICK 分支，
+    // 但它没有 name、也不对应单个配置项，需优先拦截走批量切换逻辑。
+    if (target.classList.contains('ctz-group-toggle')) {
+      toggleHiddenGroup(target.dataset.group || '', target.checked);
+      return;
+    }
     if (target.classList.contains(CLASS_INPUT_CLICK)) {
       fnChanger(target);
       return;

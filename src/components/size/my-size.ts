@@ -24,6 +24,9 @@ export const mySize = {
   },
   content: async function () {
     const config = await myStorage.getConfig();
+    // 样式总开关关闭时不生成任何版心/字体/图片尺寸样式（fnAppendStyle 覆盖旧样式即可清除）。
+    // 各尺寸配置值仍保留在 pfConfig 中，重新打开总开关后原设置立即恢复。
+    if (!config.sizeStyleEnabled) return '';
     const {
       commitModalSizeSameVersion,
       versionArticle,
@@ -56,6 +59,14 @@ export const mySize = {
       fontSizeForAnswerTitle,
       fontSizeForArticleTitle,
       contentLineHeight,
+    } = config;
+    // 视觉子开关：总闸已开启的前提下，逐类决定是否注入该类 CSS。
+    // 子开关默认全开，故老配置打开总闸后效果与旧版完全一致。
+    const {
+      styleWidthEnabled = true,
+      styleFontEnabled = true,
+      styleImageEnabled = true,
+      styleListVideoEnabled = true,
     } = config;
     const dark = await isDark();
 
@@ -238,6 +249,20 @@ export const mySize = {
       // 行高
       fnReturnStr(`p {line-height: ${contentLineHeight}px;}`, !!contentLineHeight);
 
-    return xxxFontSize + xxxHighlight + xxxImage + xxxListMore + xxxShoppingLink + xxxShoppingLink + xxxSusHeader + xxxSusHomeTab + xxxTitleTag + xxxVideo + xxxWidth;
+    // 各类尺寸 CSS 受对应子开关控制；悬浮/标题标签/购物链接/高亮等非尺寸样式
+    // 的开关本就在其它菜单（悬浮模块、高性能等），这里保持原样不额外加开关。
+    return (
+      (styleFontEnabled ? xxxFontSize : '') +
+      xxxHighlight +
+      (styleImageEnabled ? xxxImage : '') +
+      xxxListMore +
+      xxxShoppingLink +
+      xxxShoppingLink +
+      xxxSusHeader +
+      xxxSusHomeTab +
+      xxxTitleTag +
+      (styleListVideoEnabled ? xxxVideo : '') +
+      (styleWidthEnabled ? xxxWidth : '')
+    );
   },
 };

@@ -26,8 +26,24 @@ export interface IConfigHidden {
   hiddenLogo?: boolean;
   /** 隐藏header */
   hiddenHeader?: boolean;
-  /** 付费咨询 */
-  hiddenHomePayAsk?: boolean;
+  /**
+   * 知乎新版导航的隐藏开关。
+   * 命名沿用项目原有的 hiddenHeaderXxx 前缀（历史遗留，语义上已不全是顶部栏）：
+   * hiddenHeaderConsult/EducationLearning/Zhida/Square 对应左侧栏导航入口，
+   * hiddenKanshanFloatingButton 对应看山悬浮入口。
+   * 右侧栏付费咨询/知学堂推广位已被知乎移除，其开关与组合规则已删除。
+   * 具体选择器见 components/hidden/configs.ts。
+   */
+  /** 隐藏左侧栏 - 付费咨询 */
+  hiddenHeaderConsult?: boolean;
+  /** 隐藏左侧栏 - 知学堂 */
+  hiddenHeaderEducationLearning?: boolean;
+  /** 隐藏左侧栏 - 直答 */
+  hiddenHeaderZhida?: boolean;
+  /** 隐藏左侧栏 - AI Works */
+  hiddenHeaderSquare?: boolean;
+  /** 隐藏看山悬浮入口 */
+  hiddenKanshanFloatingButton?: boolean;
   // /** 隐藏顶部滚动header */
   // hiddenHeaderScroll?: boolean;
   /** 隐藏列表回答操作 */
@@ -116,8 +132,6 @@ export interface IConfigHidden {
   hiddenAnswerRightFooterContentList?: boolean;
   /** 隐藏信息栏知乎指南 */
   hiddenAnswerRightFooterFooter?: boolean;
-  /** 隐藏618红包链接（临时补充） */
-  hidden618HongBao?: boolean;
   /** 隐藏文章作者关注按钮 */
   hiddenZhuanlanFollowButton?: boolean;
   /** 隐藏文章作者头像 */
@@ -132,14 +146,8 @@ export interface IConfigHidden {
   hiddenListVideoContent?: boolean;
   /** 隐藏主页创作中心 */
   hiddenHomeCreatorEntrance?: boolean;
-  /** 隐藏主页圈子 */
-  hiddenHomeQuanzi?: boolean;
   /** 隐藏主页推荐关注 */
   hiddenHomeRecommendFollow?: boolean;
-  /** 隐藏主页分类圆桌 */
-  hiddenHomeCategory?: boolean;
-  /** 隐藏主页更多分类 */
-  hiddenHomeCategoryMore?: boolean;
   /** 隐藏主页知乎指南 */
   hiddenHomeFooter?: boolean;
   /** 隐藏主页大家都在搜 */
@@ -169,8 +177,6 @@ export interface IConfigHidden {
   hiddenHomeListTabRecommend?: boolean;
   /** 问题列表切换 - 隐藏热榜 */
   hiddenHomeListTabHot?: boolean;
-  /** 问题列表切换 - 隐藏视频 */
-  hiddenHomeListTabVideo?: boolean;
   /** 隐藏「好问题」按钮 */
   hiddenQuestionGoodQuestion?: boolean;
   /** 隐藏添加评论按钮 */
@@ -357,6 +363,32 @@ export interface IConfigSuspension {
 /** 配置参数 */
 export interface IPfConfig extends IConfigHidden, IConfigFilter, IConfigSuspension, IConfigBlackList {
   [key: string]: any;
+  /**
+   * 样式修改总开关（全局视觉开关），默认 false。
+   * 关闭时：背景/主题配色、版心与字体尺寸、自定义 CSS、视频样式均不注入，
+   *         知乎页面还原原生外观；仅保留脚本自身按钮与隐藏屏蔽样式。
+   * 已有配置值不清空，重新打开立即恢复。见 fn-changer.ts 的 changeStyleEnabled。
+   */
+  sizeStyleEnabled?: boolean;
+  /**
+   * 视觉样式子开关（7 项），默认全部开启。
+   * 仅在 sizeStyleEnabled 总闸开启的前提下逐类生效：关闭某一类只停止注入该类 CSS，
+   * 不影响其它类，也不清空已填配置值。对应「外观样式」菜单里总开关下方的拨动开关。
+   */
+  /** 版心与页面宽度 */
+  styleWidthEnabled?: boolean;
+  /** 字体大小与行高 */
+  styleFontEnabled?: boolean;
+  /** 图片尺寸与最大高度 */
+  styleImageEnabled?: boolean;
+  /** 列表视频宽度 */
+  styleListVideoEnabled?: boolean;
+  /** 背景配色与主题 */
+  styleBackgroundEnabled?: boolean;
+  /** 自定义 CSS */
+  styleCustomCssEnabled?: boolean;
+  /** 回答/列表中视频样式 */
+  styleVideoEnabled?: boolean;
   /** 是否开启接口拦截，默认开启 */
   fetchInterceptStatus?: boolean;
   /** 自定义样式 */
