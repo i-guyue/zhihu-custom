@@ -57,3 +57,45 @@
   color: #b0b0b0;
   cursor: not-allowed;
 }
+
+/*
+ * 注入到知乎页面上的脚本按钮（导出回答 / 屏蔽用户 / 获取回答链接等）在知乎深色主题下的配色。
+ * 用知乎自身的 html[data-theme=dark] 驱动，且放在脚本自身样式（INNER_CSS，始终注入）里，
+ * 不依赖「样式修改总开关」——按钮可读性是脚本 UI 职责，与背景配色修改无关。
+ * 之前这条写在 background.ts 的 dark()（CTZ_STYLE_BACKGROUND，受总开关控制），
+ * 总开关关闭时页面按钮退回白底浅字、对比度极低。
+ * 面板内按钮另有 .BackgroundDark() 里按 html[theme-dark] 的深色样式，两者作用域不冲突。
+ */
+html[data-theme='dark'] .ctz-button {
+  background: #4a4746;
+  border-color: #615e5c;
+  color: #e6e4e4;
+
+  &:hover {
+    background: #595654;
+    border-color: #7a7674;
+    color: #fff;
+  }
+
+  &:active {
+    background: #3e3b3a;
+    color: #fff;
+  }
+
+  &.ctz-button-primary {
+    background: @primary;
+    border-color: @primary;
+    color: #fff;
+  }
+
+  &.ctz-button-red {
+    color: @red1 !important;
+    border-color: @red1 !important;
+  }
+
+  &:disabled {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: #514e4e;
+    color: #7d7a78;
+  }
+}

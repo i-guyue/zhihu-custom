@@ -328,6 +328,41 @@
       border-color: #615e5c;
       box-shadow: inset 4px 4px 4px #302e2d, inset -4px -4px 4px #585553;
     }
+
+    // 以下标签/条目原本写死白底，深色下统一改为深灰底浅字
+    // 屏蔽词标签（标题/内容屏蔽词）
+    .ctz-block-words-content > span {
+      background: #4a4746;
+      border-color: #615e5c;
+      color: #e6e4e4;
+
+      &:hover {
+        color: @waring;
+        border-color: @waring;
+      }
+    }
+
+    // 黑名单用户条目
+    .ctz-black-item {
+      background: #4a4746;
+      border-color: #615e5c;
+      color: #e6e4e4;
+
+      .ctz-black-item-more:hover {
+        background: #595654;
+      }
+    }
+
+    // 黑名单条目的「设置标签/移动/移除」浮动菜单
+    .ctz-black-item-menu {
+      background: #3a3736;
+      border-color: #514e4e;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+
+      span {
+        color: #e6e4e4;
+      }
+    }
   }
 }
 

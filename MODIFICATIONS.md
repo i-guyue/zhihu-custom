@@ -58,7 +58,16 @@ index.html（静态骨架）→ initHTML() 渲染动态开关 → initOperate() 
 `CTZ_STYLE_BACKGROUND` 且受总开关控制；总开关默认关闭时注入空串，控件退回 `button.less`/`select.less`
 的白底，白底浅字几乎看不清。修复：把面板内控件深色配色集中到 `common.less` 的 `.BackgroundDark()`，
 用 `#CTZ_DIALOG` 等 ID 选择器提高优先级（盖过浅色默认值，也不误伤页面上注入的按钮）。
-`background.ts` 那条页面按钮着色保留——职责是页面按钮，与面板按钮分开。
+页面上的脚本按钮（导出回答 / 屏蔽用户 / 获取回答链接）深色着色，原先写在 `background.ts` 的 `dark()` 里、
+注入 `CTZ_STYLE_BACKGROUND` 且受总开关控制——总开关关闭时页面按钮退回白底浅字（知乎页面本身深色由
+`html[data-theme=dark]` 控制，不受脚本总开关影响），形成白底浅字。修复：把这条移到 `button.less`
+（脚本自身样式 `INNER_CSS`，始终注入），用知乎的 `html[data-theme=dark]` 驱动，与总开关解耦；
+`background.ts` 里那条已删除。按钮可读性是脚本 UI 职责，与背景配色修改分开。
+
+面板内其它写死白底的控件同样收拢到 `.BackgroundDark()`：屏蔽词标签（`.ctz-block-words-content > span`）、
+黑名单用户条目（`.ctz-black-item`）及其右键菜单（`.ctz-black-item-menu`），深色下统一改为深灰底浅字。
+这几处基础样式里写死 `background:#fff`，深色主题下形成白底浅字；按 `#CTZ_DIALOG` 作用域用 ID 选择器
+覆盖，优先级确定（此前混在 mixin 顶层的部分规则未稳定生效）。
 
 ### 3. 样式修改总开关与分项开关
 

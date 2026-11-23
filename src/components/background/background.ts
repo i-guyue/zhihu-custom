@@ -66,9 +66,9 @@ export const myBackground = {
         `${DARK_NAME_COLOR_LIGHT_LINK}{color: deepskyblue!important;}` +
         `.css-1tu59u4,.ZDI,.ZDI--PencilCircleFill24,.Zi,.Zi--ArrowDown{fill: deepskyblue!important;}` +
         // 存在于深夜模式下的额外的背景色1
-        `.ztext pre,.ztext code{background: ${background}!important;}` +
-        // 暗黑模式下的自定义按钮颜色
-        `.ctz-button{background: ${background2};border-color: #f7f9f9;color: #f7f9f9;}`,
+        `.ztext pre,.ztext code{background: ${background}!important;}`,
+      // 脚本按钮在知乎深色主题下的配色已移入 button.less（脚本自身样式，始终注入），
+      // 不依赖样式总开关——按钮可读性属脚本 UI 职责，不随背景配色修改一起被清空。
       (i) => `html[data-theme=dark] ${i}`, // 添加 html[data-theme=dark] 前缀
     );
   },
